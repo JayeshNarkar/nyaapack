@@ -1,0 +1,37 @@
+{
+  "name": "anime-torrent-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "nyaasitorrenter": "./bin/cli.js"
+  },
+  "scripts": {
+    "start": "node bin/cli.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc",
+    "dev": "npx tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^24.3.1",
+    "@types/nyaapi": "^2.4.3",
+    "@types/webtorrent": "^0.110.1",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@types/sqlite3": "^3.1.11",
+    "better-sqlite3": "^12.2.0",
+    "chalk": "^5.6.2",
+    "cli-table3": "^0.6.5",
+    "commander": "^14.0.1",
+    "inquirer": "^12.9.4",
+    "nyaapi": "^2.4.4",
+    "sqlite3": "^5.1.7",
+    "webtorrent": "^2.8.4"
+  }
+}
