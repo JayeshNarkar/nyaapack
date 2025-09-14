@@ -3,13 +3,34 @@ import { downloadDir } from "../index.js";
 import fs from "fs";
 import readline from "readline";
 import inquirer from "inquirer";
+import { TorrentSchema } from "./types.js";
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+function getTorrentQuality(torrent: TorrentSchema) {
+  const name = torrent.name.toLowerCase();
+  const qualityMatch = name.match(/(\d{3,4}p)/i);
+  return qualityMatch ? qualityMatch[1] : "Unknown";
+}
+
+function getAudioType(
+  torrent: TorrentSchema
+): "undefined" | "Dual-Audio" | "Dubbed" {
+  const name = torrent.name.toLowerCase();
+
+  if (name.includes("dual")) {
+    return "Dual-Audio";
+  } else if (name.includes("dub")) {
+    return "Dubbed";
+  }
+
+  return "undefined";
+}
 
 async function promptUserBoolean(prompt: String): Promise<boolean> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
   return new Promise<boolean>((resolve) => {
     rl.question(`${prompt} (y/n, default: y): `, (answer: string) => {
       resolve(answer.toLowerCase() !== "n");
@@ -70,6 +91,8 @@ export async function promptForSelection(maxIndex: number): Promise<number> {
 }
 
 export {
+  getTorrentQuality,
+  getAudioType,
   promptUserBoolean,
   ensureDownloadDir,
   formatBytes,

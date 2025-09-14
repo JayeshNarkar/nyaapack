@@ -9,3 +9,5 @@ program
   .version("1.0.0");
 
 program.addCommand(downloadCommand());
+
+export default program;

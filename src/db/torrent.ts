@@ -9,7 +9,7 @@ torrentsDB.exec(`
     id TEXT PRIMARY KEY,
     name TEXT,
     filesize TEXT,
-    magnet TEXT,    
+    magnet TEXT    
   )
 `);
 
