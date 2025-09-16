@@ -1,8 +1,13 @@
 import Database, { Database as DatabaseType } from "better-sqlite3";
+import { __dirname } from "../index.js";
+import path from "path";
 
-const downloadSessionDB: DatabaseType = new Database("downloadSession.db", {
-  verbose: console.log,
-});
+const downloadSessionDB: DatabaseType = new Database(
+  path.join(__dirname, "downloadSession.db"),
+  {
+    verbose: console.log,
+  }
+);
 
 downloadSessionDB.exec(`
   CREATE TABLE IF NOT EXISTS downloadSession (

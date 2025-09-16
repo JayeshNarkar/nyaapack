@@ -1,9 +1,14 @@
 import Database, { Database as DatabaseType } from "better-sqlite3";
 import { TorrentSchema } from "../utils/types.js";
+import path from "path";
+import { __dirname } from "../index.js";
 
-const torrentsDB: DatabaseType = new Database("torrents.db", {
-  verbose: console.log,
-});
+const torrentsDB: DatabaseType = new Database(
+  path.join(__dirname, "torrents.db"),
+  {
+    verbose: console.log,
+  }
+);
 
 torrentsDB.exec(`
   CREATE TABLE IF NOT EXISTS torrents (
@@ -16,7 +21,7 @@ torrentsDB.exec(`
 
 function addTorrentToDB(torrent: TorrentSchema) {
   const stmt = torrentsDB.prepare(
-    "INSERT into torrents(id, name, filesize, magnet) VALUES(?,?,?,?)"
+    "INSERT into torrents (id, name, filesize, magnet) VALUES(?,?,?,?)"
   );
   const result = stmt.run(
     torrent.id,
