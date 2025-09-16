@@ -24,7 +24,7 @@ downloadSessionDB.exec(`
 
 function createDownloadSessionDB(torrentID: string, downloadPath: string) {
   const stmt = downloadSessionDB.prepare(
-    "INSERT into downloadSession(torrentID, downloadPath,status) VALUES(?,?,?,?)"
+    "INSERT into downloadSession(torrentID, downloadPath) VALUES(?,?)"
   );
   const result = stmt.run(torrentID, downloadPath);
 
