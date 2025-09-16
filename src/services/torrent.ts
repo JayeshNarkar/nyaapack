@@ -36,8 +36,17 @@ function startDownload(torrent: TorrentSchema | undefined): StatusResponse {
       status: 200,
       message: "Torrent has started downloading successfully!",
     };
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    if (
+      (error?.code && error?.code === "SQLITE_CONSTRAINT_PRIMARYKEY") ||
+      (typeof error.message === "string" &&
+        error.message.includes("UNIQUE constraint failed"))
+    ) {
+      return {
+        status: 409,
+        message: "Torrent already exists in the database.",
+      };
+    }
     return {
       status: 500,
       message: "Internal Error!",
