@@ -58,11 +58,11 @@ export default function downloadCommand() {
             throw Error(result.message);
           }
 
-          // if (!options.progress) {
-          //   console.log(
-          //     '🚀 Download started in background. Use "nyaasitorrenter progress" to check status.'
-          //   );
-          // }
+          if (!options.progress) {
+            console.log(
+              '🚀 Download started in background. Use "nyaasitorrenter progress" to check status.'
+            );
+          }
         }
       } catch (error: any) {
         console.error("❌ Error:", error.message);
