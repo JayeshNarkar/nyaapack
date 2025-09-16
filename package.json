@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "nyaasitorrenter": "./bin/cli.js"
+    "nyaapack": "./bin/cli.js"
   },
   "scripts": {
     "start": "node bin/cli.js",

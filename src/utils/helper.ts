@@ -1,9 +1,38 @@
 import WebTorrent from "webtorrent";
 import { downloadDir } from "../index.js";
 import fs from "fs";
-import readline from "readline";
 import inquirer from "inquirer";
 import { TorrentSchema } from "./types.js";
+
+function filterTorrents(
+  torrents: TorrentSchema[],
+  filter: string,
+  audio: string
+): TorrentSchema[] {
+  let filtered = torrents;
+
+  if (filter) {
+    filtered = filtered.filter((torrent) =>
+      torrent.name.toLowerCase().includes(filter)
+    );
+  }
+
+  if (audio) {
+    filtered = filtered.filter((torrent) => {
+      const torrentAudioType = getAudioType(torrent).toLowerCase();
+
+      if (audio === "dual-audio" || audio === "dual") {
+        return torrentAudioType === "dual-audio";
+      } else if (audio === "dubbed" || audio === "dub") {
+        return torrentAudioType === "dubbed";
+      } else {
+        return torrentAudioType === "undefined";
+      }
+    });
+  }
+
+  return filtered;
+}
 
 function getTorrentQuality(torrent: TorrentSchema) {
   const name = torrent.name.toLowerCase();
@@ -23,20 +52,6 @@ function getAudioType(
   }
 
   return "undefined";
-}
-
-async function promptUserBoolean(prompt: String): Promise<boolean> {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  return new Promise<boolean>((resolve) => {
-    rl.question(`${prompt} (y/n, default: y): `, (answer: string) => {
-      resolve(answer.toLowerCase() !== "n");
-      rl.close();
-    });
-  });
 }
 
 function ensureDownloadDir() {
@@ -77,7 +92,7 @@ export async function promptForSelection(maxIndex: number): Promise<number> {
   const { selection } = await inquirer.prompt({
     type: "number",
     name: "selection",
-    message: `Select torrent (1-${maxIndex}):`,
+    message: `Select a torrent (1-${maxIndex}):`,
     validate: (input: number | undefined) => {
       if (input === undefined)
         return `Please enter a number between 1 and ${maxIndex}`;
@@ -90,7 +105,19 @@ export async function promptForSelection(maxIndex: number): Promise<number> {
   return selection - 1;
 }
 
+async function promptUserBoolean(prompt: string): Promise<boolean> {
+  const { confirmation } = await inquirer.prompt({
+    type: "confirm",
+    name: "confirmation",
+    message: prompt,
+    default: true,
+  });
+
+  return confirmation;
+}
+
 export {
+  filterTorrents,
   getTorrentQuality,
   getAudioType,
   promptUserBoolean,

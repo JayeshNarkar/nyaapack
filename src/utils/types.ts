@@ -5,3 +5,8 @@ export interface TorrentSchema {
   magnet: string;
   seeders: string;
 }
+
+export interface StatusResponse {
+  status: number;
+  message: string;
+}

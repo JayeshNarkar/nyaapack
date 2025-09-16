@@ -17,4 +17,13 @@ downloadSessionDB.exec(`
   )
 `);
 
-export default downloadSessionDB;
+function createDownloadSessionDB(torrentID: string, downloadPath: string) {
+  const stmt = downloadSessionDB.prepare(
+    "INSERT into torrents(torrentID, downloadPath,status) VALUES(?,?,?,?)"
+  );
+  const result = stmt.run(torrentID, downloadPath);
+
+  return result.lastInsertRowid;
+}
+
+export { downloadSessionDB, createDownloadSessionDB };
