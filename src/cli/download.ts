@@ -36,7 +36,7 @@ export default function downloadCommand() {
         );
 
         const numFilteredResults = filteredResults.length;
-
+        console.log(`✅ Number of filtered results: ${results.length}`);
         if (numFilteredResults == 0) {
           startDownload(filteredResults[0]);
         } else if (numFilteredResults == 1) {
