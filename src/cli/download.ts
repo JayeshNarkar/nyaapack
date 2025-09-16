@@ -45,14 +45,18 @@ export default function downloadCommand() {
             "Do you wish to download the only result? "
           );
           if (choice == true) {
-            console.log("Download start for " + filteredResults[0]?.name);
+            console.log("Download started for " + filteredResults[0]?.name);
           }
         } else {
           displayTorrentTable(filteredResults);
 
           const choiceCode = await promptForSelection(numFilteredResults);
 
-          startDownload(filteredResults.at(choiceCode));
+          const result = startDownload(filteredResults.at(choiceCode));
+
+          if (result.status != 200) {
+            throw Error(result.message);
+          }
 
           // if (!options.progress) {
           //   console.log(
