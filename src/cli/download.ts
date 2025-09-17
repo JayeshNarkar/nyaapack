@@ -7,6 +7,7 @@ import {
   promptUserBoolean,
 } from "../utils/helper.js";
 import { startDownload } from "../services/torrent.js";
+import { getActiveResourcesInfo } from "process";
 
 export default function downloadCommand() {
   const command = new Command("download")
@@ -34,7 +35,7 @@ export default function downloadCommand() {
           options.filter.toLowerCase(),
           options.audio.toLowerCase()
         );
-
+        console.log(getActiveResourcesInfo());
         const numFilteredResults = filteredResults.length;
         console.log(`✅ Number of filtered results: ${results.length}`);
         if (numFilteredResults == 0) {
@@ -57,7 +58,7 @@ export default function downloadCommand() {
           if (result.status != 200) {
             throw Error(result.message);
           }
-
+          console.log(getActiveResourcesInfo());
           if (!options.progress) {
             console.log(
               '🚀 Download started in background. Use "nyaasitorrenter progress" to check status.'
