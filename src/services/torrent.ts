@@ -4,9 +4,12 @@ import { downloadDir } from "../index.js";
 import { StatusResponse, TorrentSchema } from "../utils/types.js";
 import WebTorrent from "webtorrent";
 
-const client = new WebTorrent();
+export const client = new WebTorrent();
 
-function startDownload(torrent: TorrentSchema | undefined): StatusResponse {
+function startDownload(
+  torrent: TorrentSchema | undefined,
+  progress: boolean
+): StatusResponse {
   try {
     if (!torrent) {
       return {
@@ -32,6 +35,8 @@ function startDownload(torrent: TorrentSchema | undefined): StatusResponse {
       };
     }
 
+    startBackgroundDownload(torrent);
+
     return {
       status: 200,
       message: "Torrent has started downloading successfully!",
@@ -52,6 +57,11 @@ function startDownload(torrent: TorrentSchema | undefined): StatusResponse {
       message: "Internal Error!",
     };
   }
+}
+
+function startBackgroundDownload(torrent: TorrentSchema) {
+  const download = client.add(torrent.magnet, { path: downloadDir });
+  console.log(`🚀 Download started: ${download.name}`);
 }
 
 export { startDownload };

@@ -39,7 +39,7 @@ export default function downloadCommand() {
         const numFilteredResults = filteredResults.length;
         console.log(`✅ Number of filtered results: ${results.length}`);
         if (numFilteredResults == 0) {
-          startDownload(filteredResults[0]);
+          startDownload(filteredResults[0], options.progress);
         } else if (numFilteredResults == 1) {
           displayTorrentTable(filteredResults);
           const choice = await promptUserBoolean(
@@ -53,16 +53,13 @@ export default function downloadCommand() {
 
           const choiceCode = await promptForSelection(numFilteredResults);
 
-          const result = startDownload(filteredResults.at(choiceCode));
+          const result = startDownload(
+            filteredResults.at(choiceCode),
+            options.progress
+          );
 
           if (result.status != 200) {
             throw Error(result.message);
-          }
-          console.log(getActiveResourcesInfo());
-          if (!options.progress) {
-            console.log(
-              '🚀 Download started in background. Use "nyaasitorrenter progress" to check status.'
-            );
           }
         }
       } catch (error: any) {

@@ -1,4 +1,3 @@
-import WebTorrent from "webtorrent";
 import { downloadDir } from "../index.js";
 import {
   ensureDownloadDir,
@@ -6,11 +5,10 @@ import {
   formatTimeRemaining,
 } from "./helper.js";
 import { TorrentSchema } from "./types.js";
-
 import { torrentsDB } from "../db/torrent.js";
 import { downloadSessionDB } from "../db/downloadSession.js";
-
-const client = new WebTorrent();
+import { client } from "../services/torrent.js";
+import WebTorrent from "webtorrent";
 
 function addTorrent(torrent: TorrentSchema) {
   ensureDownloadDir();
