@@ -6,12 +6,14 @@ export async function NyaaSiFetcher(
   numOfResults: number = 5,
   sort: string = "seeders"
 ): Promise<TorrentSchema[]> {
+  let timeOutId;
   try {
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(
-        () => reject(new Error("Nyaa.si request timeout - site may be down")),
-        10000
-      )
+    const timeoutPromise = new Promise<never>(
+      (_, reject) =>
+        (timeOutId = setTimeout(
+          () => reject(new Error("Nyaa.si request timeout - site may be down")),
+          10000
+        ))
     );
 
     console.log(
@@ -43,5 +45,7 @@ export async function NyaaSiFetcher(
     }
 
     throw error;
+  } finally {
+    clearTimeout(timeOutId);
   }
 }
