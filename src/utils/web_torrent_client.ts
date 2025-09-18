@@ -15,6 +15,11 @@ import {
   updateDownloadProgress,
 } from "../db/downloadSession.js";
 
+import logUpdate from "log-update";
+
+let lastUpdateTime = 0;
+const UPDATE_INTERVAL_MS = 250;
+
 function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
   ensureDownloadDir();
 
@@ -26,10 +31,16 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
   webtorrentInstance.on("ready", () => {
     const relativePath = getTorrentRelativeName(webtorrentInstance);
     updateDownloadPath(downloadSessionID as number, relativePath as string);
+
     if (progressInterval) clearInterval(progressInterval);
     progressInterval = setInterval(() => {
       try {
-        displayTorrentProgress(webtorrentInstance);
+        const now = Date.now();
+        if (now - lastUpdateTime >= UPDATE_INTERVAL_MS) {
+          displayTorrentProgress(webtorrentInstance);
+          lastUpdateTime = now;
+        }
+
         if (typeof downloadSessionID === "number") {
           updateDownloadProgress(
             downloadSessionID,
@@ -39,7 +50,7 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
       } catch (err) {
         console.error("Progress update error:", err);
       }
-    }, 1000);
+    }, 100);
   });
 
   webtorrentInstance.on("done", () => {
@@ -71,17 +82,18 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
 }
 
 function displayTorrentProgress(torrent: WebTorrent.Torrent) {
-  console.clear();
-  console.log("📊 Download Status:");
-  console.log(
-    `💾 Total downloaded: ${formatBytes(torrent.downloaded)}/${formatBytes(
-      torrent.length
-    )}`
-  );
-  console.log(`⚡ Download speed: ${formatBytes(torrent.downloadSpeed)}/s`);
-  console.log(`📈 Progress: ${(torrent.progress * 100).toFixed(2)}%`);
-  console.log(`👥 Peers: ${torrent.numPeers}`);
-  console.log(`⏰ Time remaining: ${formatTimeRemaining(torrent)}`);
+  const progressText = `
+📊 Download Status:
+💾 Total downloaded: ${formatBytes(torrent.downloaded)}/${formatBytes(
+    torrent.length
+  )}
+⚡ Download speed: ${formatBytes(torrent.downloadSpeed)}/s
+📈 Progress: ${(torrent.progress * 100).toFixed(2)}%
+👥 Peers: ${torrent.numPeers}
+⏰ Time remaining: ${formatTimeRemaining(torrent)}
+  `.trim();
+
+  logUpdate(progressText);
 }
 
 export { addTorrent, displayTorrentProgress };

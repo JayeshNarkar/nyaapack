@@ -30,6 +30,7 @@
     "cli-table3": "^0.6.5",
     "commander": "^14.0.1",
     "inquirer": "^12.9.4",
+    "log-update": "^7.0.0",
     "nyaapi": "^2.4.4",
     "sqlite3": "^5.1.7",
     "webtorrent": "^2.8.4"
