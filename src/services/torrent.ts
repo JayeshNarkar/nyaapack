@@ -3,13 +3,11 @@ import { addTorrentToDB } from "../db/torrent.js";
 import { downloadDir } from "../index.js";
 import { StatusResponse, TorrentSchema } from "../utils/types.js";
 import WebTorrent from "webtorrent";
+import { addTorrent } from "../utils/web_torrent_client.js";
 
 export const client = new WebTorrent();
 
-function startDownload(
-  torrent: TorrentSchema | undefined,
-  progress: boolean
-): StatusResponse {
+function startDownload(torrent: TorrentSchema | undefined): StatusResponse {
   try {
     if (!torrent) {
       return {
@@ -35,7 +33,7 @@ function startDownload(
       };
     }
 
-    startBackgroundDownload(torrent);
+    addTorrent(torrent, Number(downloadSessionID));
 
     return {
       status: 200,
@@ -57,11 +55,6 @@ function startDownload(
       message: "Internal Error!",
     };
   }
-}
-
-function startBackgroundDownload(torrent: TorrentSchema) {
-  const download = client.add(torrent.magnet, { path: downloadDir });
-  console.log(`🚀 Download started: ${download.name}`);
 }
 
 export { startDownload };

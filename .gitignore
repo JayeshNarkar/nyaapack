@@ -23,7 +23,7 @@ torrents.db
 # production
 /build
 /dist
-/AnimeDownload
+/Downloads
 # misc
 .DS_Store
 *.pem

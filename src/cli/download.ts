@@ -14,7 +14,7 @@ export default function downloadCommand() {
     .description("Download torrents from Nyaa.si")
     .argument("<query>", "Search query")
     .option("-n, --number <number>", "Number of results to show", "5")
-    .option("--progress", "Show download progress", false)
+    // .option("--progress", "Show download progress", false)
     .option(
       "-f, --filter <string>",
       "Filter results by text in name. (Note: you may have to increase -n to find what youre looking for)",
@@ -39,7 +39,7 @@ export default function downloadCommand() {
         const numFilteredResults = filteredResults.length;
         console.log(`✅ Number of filtered results: ${results.length}`);
         if (numFilteredResults == 0) {
-          startDownload(filteredResults[0], options.progress);
+          startDownload(filteredResults[0]);
         } else if (numFilteredResults == 1) {
           displayTorrentTable(filteredResults);
           const choice = await promptUserBoolean(
@@ -53,10 +53,7 @@ export default function downloadCommand() {
 
           const choiceCode = await promptForSelection(numFilteredResults);
 
-          const result = startDownload(
-            filteredResults.at(choiceCode),
-            options.progress
-          );
+          const result = startDownload(filteredResults.at(choiceCode));
 
           if (result.status != 200) {
             throw Error(result.message);
