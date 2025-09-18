@@ -4,9 +4,9 @@ import {
   formatBytes,
   formatTimeRemaining,
   getTorrentRelativeName,
-} from "./helper.js";
-import { TorrentSchema } from "./types.js";
-import { client } from "../services/torrent.js";
+} from "../utils/helper.js";
+import { TorrentSchema } from "../utils/types.js";
+import { client } from "./torrent.js";
 import WebTorrent from "webtorrent";
 import {
   markDownloadDone,
@@ -15,7 +15,7 @@ import {
   updateDownloadProgress,
 } from "../db/downloadSession.js";
 
-import logUpdate from "log-update";
+import { Logger } from "../utils/logger.js";
 
 let lastUpdateTime = 0;
 const UPDATE_INTERVAL_MS = 250;
@@ -32,14 +32,12 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
     const relativePath = getTorrentRelativeName(webtorrentInstance);
     updateDownloadPath(downloadSessionID as number, relativePath as string);
 
+    Logger.startProgress();
+
     if (progressInterval) clearInterval(progressInterval);
     progressInterval = setInterval(() => {
       try {
-        const now = Date.now();
-        if (now - lastUpdateTime >= UPDATE_INTERVAL_MS) {
-          displayTorrentProgress(webtorrentInstance);
-          lastUpdateTime = now;
-        }
+        displayTorrentProgress(webtorrentInstance);
 
         if (typeof downloadSessionID === "number") {
           updateDownloadProgress(
@@ -48,9 +46,9 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
           );
         }
       } catch (err) {
-        console.error("Progress update error:", err);
+        Logger.error("Progress update error:", err);
       }
-    }, 100);
+    }, 1000);
   });
 
   webtorrentInstance.on("done", () => {
@@ -59,6 +57,7 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
       progressInterval = null;
     }
     displayTorrentProgress(webtorrentInstance);
+    Logger.stopProgress();
     if (typeof downloadSessionID === "number") {
       markDownloadDone(downloadSessionID);
     }
@@ -70,6 +69,7 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
       clearInterval(progressInterval);
       progressInterval = null;
     }
+    Logger.stopProgress();
     console.error("❌ Torrent error:", err);
     if (typeof downloadSessionID === "number") {
       markDownloadError(downloadSessionID, err.message || String(err));
@@ -93,7 +93,7 @@ function displayTorrentProgress(torrent: WebTorrent.Torrent) {
 ⏰ Time remaining: ${formatTimeRemaining(torrent)}
   `.trim();
 
-  logUpdate(progressText);
+  Logger.updateProgress(progressText);
 }
 
 export { addTorrent, displayTorrentProgress };

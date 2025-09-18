@@ -3,7 +3,7 @@ import { addTorrentToDB } from "../db/torrent.js";
 import { downloadDir } from "../index.js";
 import { StatusResponse, TorrentSchema } from "../utils/types.js";
 import WebTorrent from "webtorrent";
-import { addTorrent } from "../utils/web_torrent_client.js";
+import { addTorrent } from "./web_torrent_client.js";
 
 export const client = new WebTorrent();
 
