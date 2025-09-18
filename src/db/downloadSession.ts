@@ -3,10 +3,7 @@ import { __dirname } from "../index.js";
 import path from "path";
 
 const downloadSessionDB: DatabaseType = new Database(
-  path.join(__dirname, "downloadSession.db"),
-  {
-    verbose: console.log,
-  }
+  path.join(__dirname, "downloadSession.db")
 );
 
 downloadSessionDB.exec(`
