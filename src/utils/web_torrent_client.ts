@@ -3,6 +3,7 @@ import {
   ensureDownloadDir,
   formatBytes,
   formatTimeRemaining,
+  getTorrentRelativeName,
 } from "./helper.js";
 import { TorrentSchema } from "./types.js";
 import { client } from "../services/torrent.js";
@@ -10,6 +11,7 @@ import WebTorrent from "webtorrent";
 import {
   markDownloadDone,
   markDownloadError,
+  updateDownloadPath,
   updateDownloadProgress,
 } from "../db/downloadSession.js";
 
@@ -22,30 +24,8 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
   let progressInterval: NodeJS.Timeout | null = null;
 
   webtorrentInstance.on("ready", () => {
-    try {
-      const files = webtorrentInstance.files || [];
-      let relativeName;
-      if (files.length === 1 && files[0]) {
-        relativeName = files[0].name;
-      } else {
-        const topLevels = new Set(
-          files.map((f) => {
-            const parts = f.path.split("/").filter(Boolean);
-            return parts.length > 0 ? parts[0] : f.name;
-          })
-        );
-        relativeName =
-          topLevels.size === 1
-            ? Array.from(topLevels)[0]
-            : (webtorrentInstance.name as string);
-      }
-
-      if (typeof downloadSessionID === "number") {
-        updateDownloadPath(downloadSessionID, relativeName as string);
-      }
-    } catch (err) {
-      console.error("Error determining torrent target path:", err);
-    }
+    const relativePath = getTorrentRelativeName(webtorrentInstance);
+    updateDownloadPath(downloadSessionID as number, relativePath as string);
     if (progressInterval) clearInterval(progressInterval);
     progressInterval = setInterval(() => {
       try {
@@ -105,6 +85,3 @@ function displayTorrentProgress(torrent: WebTorrent.Torrent) {
 }
 
 export { addTorrent, displayTorrentProgress };
-function updateDownloadPath(downloadSessionID: number, relativeName: string) {
-  throw new Error("Function not implemented.");
-}

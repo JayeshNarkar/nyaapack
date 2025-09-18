@@ -61,6 +61,7 @@ function updateDownloadPath(id: number, relativePath: string) {
 
 export {
   downloadSessionDB,
+  updateDownloadPath,
   createDownloadSessionDB,
   updateDownloadProgress,
   markDownloadDone,

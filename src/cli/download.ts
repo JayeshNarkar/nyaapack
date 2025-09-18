@@ -35,7 +35,7 @@ export default function downloadCommand() {
           options.filter.toLowerCase(),
           options.audio.toLowerCase()
         );
-        console.log(getActiveResourcesInfo());
+
         const numFilteredResults = filteredResults.length;
         console.log(`✅ Number of filtered results: ${results.length}`);
         if (numFilteredResults == 0) {

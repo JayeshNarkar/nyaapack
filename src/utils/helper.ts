@@ -88,6 +88,30 @@ function formatTimeRemaining(torrent: WebTorrent.Torrent) {
   }
 }
 
+function getTorrentRelativeName(
+  torrent: WebTorrent.Torrent
+): string | undefined {
+  const files = torrent.files || [];
+  let relativeName: string | undefined;
+
+  if (files.length === 1 && files[0]) {
+    relativeName = files[0].name;
+  } else {
+    const topLevels = new Set(
+      files.map((f) => {
+        const parts = f.path.split("/").filter(Boolean);
+        return parts.length > 0 ? parts[0] : f.name;
+      })
+    );
+    relativeName =
+      topLevels.size === 1
+        ? Array.from(topLevels)[0]
+        : (torrent.name as string);
+  }
+  console.log(relativeName);
+  return relativeName;
+}
+
 export async function promptForSelection(maxIndex: number): Promise<number> {
   const { selection } = await inquirer.prompt({
     type: "number",
@@ -117,6 +141,7 @@ async function promptUserBoolean(prompt: string): Promise<boolean> {
 }
 
 export {
+  getTorrentRelativeName,
   filterTorrents,
   getTorrentQuality,
   getAudioType,
