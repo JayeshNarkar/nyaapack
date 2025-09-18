@@ -37,7 +37,7 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
     if (progressInterval) clearInterval(progressInterval);
     progressInterval = setInterval(() => {
       try {
-        displayTorrentProgress(webtorrentInstance);
+        // displayTorrentProgress(webtorrentInstance);
 
         if (typeof downloadSessionID === "number") {
           updateDownloadProgress(
@@ -46,7 +46,7 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
           );
         }
       } catch (err) {
-        Logger.error("Progress update error:", err);
+        Logger.error("Progress update error:" + err);
       }
     }, 1000);
   });
@@ -56,7 +56,7 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
       clearInterval(progressInterval);
       progressInterval = null;
     }
-    displayTorrentProgress(webtorrentInstance);
+    // displayTorrentProgress(webtorrentInstance);
     Logger.stopProgress();
     if (typeof downloadSessionID === "number") {
       markDownloadDone(downloadSessionID);
@@ -77,7 +77,7 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
   });
 
   webtorrentInstance.on("download", () => {
-    displayTorrentProgress(webtorrentInstance);
+    // displayTorrentProgress(webtorrentInstance);
   });
 }
 

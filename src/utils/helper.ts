@@ -88,14 +88,12 @@ function formatTimeRemaining(torrent: WebTorrent.Torrent) {
   }
 }
 
-function getTorrentRelativeName(
-  torrent: WebTorrent.Torrent
-): string | undefined {
+function getTorrentRelativeName(torrent: WebTorrent.Torrent): string {
   const files = torrent.files || [];
-  let relativeName: string | undefined;
+  let relativeName: string;
 
   if (files.length === 1 && files[0]) {
-    relativeName = files[0].name;
+    relativeName = `${downloadDir}/${files[0].name}`;
   } else {
     const topLevels = new Set(
       files.map((f) => {
@@ -103,12 +101,15 @@ function getTorrentRelativeName(
         return parts.length > 0 ? parts[0] : f.name;
       })
     );
-    relativeName =
-      topLevels.size === 1
-        ? Array.from(topLevels)[0]
-        : (torrent.name as string);
+
+    if (topLevels.size === 1) {
+      relativeName = `${downloadDir}/${Array.from(topLevels)[0]}`;
+    } else {
+      relativeName = `${downloadDir}/${torrent.name || "unknown_torrent"}`;
+    }
   }
-  console.log(relativeName);
+
+  console.log("Relative path:", relativeName);
   return relativeName;
 }
 
