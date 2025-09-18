@@ -37,7 +37,9 @@ export async function NyaaSiFetcher(
   } catch (error: any) {
     if (
       error.message.includes("timeout") ||
-      error.message.includes("ENOTFOUND")
+      error.message.includes("ENOTFOUND") ||
+      error.code === "ECONNREFUSED" ||
+      error.code === "ETIMEDOUT"
     ) {
       throw new Error(
         `Nyaa.si is currently unavailable. Please check:\n• https://downforeveryoneorjustme.com/nyaa.si\n• Try using a VPN\n• Try again later`

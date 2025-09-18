@@ -24,13 +24,10 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
   webtorrentInstance.on("ready", () => {
     try {
       const files = webtorrentInstance.files || [];
-      let relativeName: string;
-      if (files.length === 1) {
-        // single file: store the filename
+      let relativeName;
+      if (files.length === 1 && files[0]) {
         relativeName = files[0].name;
       } else {
-        // multi-file: prefer the torrent.name (usually top-level folder)
-        // fallback: determine common top-level directory if available
         const topLevels = new Set(
           files.map((f) => {
             const parts = f.path.split("/").filter(Boolean);
@@ -44,8 +41,7 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
       }
 
       if (typeof downloadSessionID === "number") {
-        // store relative name; to get absolute path later: path.join(downloadDir, relativeName)
-        updateDownloadPath(downloadSessionID, relativeName);
+        updateDownloadPath(downloadSessionID, relativeName as string);
       }
     } catch (err) {
       console.error("Error determining torrent target path:", err);
