@@ -3,6 +3,7 @@ import { downloadDir } from "../index.js";
 import fs from "fs";
 import inquirer from "inquirer";
 import { TorrentSchema } from "./types.js";
+import path from "path";
 
 function filterTorrents(
   torrents: TorrentSchema[],
@@ -93,7 +94,7 @@ function getTorrentRelativeName(torrent: WebTorrent.Torrent): string {
   let relativeName: string;
 
   if (files.length === 1 && files[0]) {
-    relativeName = `${downloadDir}/${files[0].name}`;
+    relativeName = path.join(downloadDir, files[0].name);
   } else {
     const topLevels = new Set(
       files.map((f) => {
@@ -103,9 +104,12 @@ function getTorrentRelativeName(torrent: WebTorrent.Torrent): string {
     );
 
     if (topLevels.size === 1) {
-      relativeName = `${downloadDir}/${Array.from(topLevels)[0]}`;
+      relativeName = path.join(
+        downloadDir,
+        Array.from(topLevels)[0] || "unknown_torrent"
+      );
     } else {
-      relativeName = `${downloadDir}/${torrent.name || "unknown_torrent"}`;
+      relativeName = path.join(downloadDir, torrent.name || "unknown_torrent");
     }
   }
 
