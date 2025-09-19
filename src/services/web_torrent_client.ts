@@ -6,7 +6,7 @@ import {
   getTorrentRelativeName,
 } from "../utils/helper.js";
 import { TorrentSchema } from "../utils/types.js";
-import { client } from "./torrent.js";
+import { client } from "./download.js";
 import WebTorrent from "webtorrent";
 import {
   markDownloadDone,
@@ -16,6 +16,9 @@ import {
 } from "../db/downloadSession.js";
 
 import { Logger } from "../utils/logger.js";
+
+let lastUpdateTime = 0;
+const UPDATE_THROTTLE_MS = 500;
 
 function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
   ensureDownloadDir();
@@ -37,10 +40,13 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
         displayTorrentProgress(webtorrentInstance);
 
         if (typeof downloadSessionID === "number") {
-          updateDownloadProgress(
-            downloadSessionID,
-            webtorrentInstance.progress
-          );
+          const now = Date.now();
+          if (now - lastUpdateTime >= UPDATE_THROTTLE_MS) {
+            updateDownloadProgress(
+              downloadSessionID,
+              webtorrentInstance.progress
+            );
+          }
         }
       } catch (err) {
         Logger.error("Progress update error:" + err);

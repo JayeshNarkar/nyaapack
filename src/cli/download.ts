@@ -6,7 +6,7 @@ import {
   promptForSelection,
   promptUserBoolean,
 } from "../utils/helper.js";
-import { startDownload } from "../services/torrent.js";
+import { startDownload } from "../services/download.js";
 import { getActiveResourcesInfo } from "process";
 
 export default function downloadCommand() {

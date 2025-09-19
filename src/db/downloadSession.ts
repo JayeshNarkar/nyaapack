@@ -15,7 +15,8 @@ downloadSessionDB.exec(`
     progress REAL DEFAULT 0.0,
     startTime DATETIME DEFAULT CURRENT_TIMESTAMP,
     endTime DATETIME,
-    errorMessage TEXT
+    errorMessage TEXT,
+    lastHeartbeat DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `);
 
@@ -30,7 +31,7 @@ function createDownloadSessionDB(torrentID: string, downloadPath: string) {
 
 function updateDownloadProgress(id: number, progress: number) {
   const stmt = downloadSessionDB.prepare(
-    "UPDATE downloadSession SET progress = ?, status = 'downloading' WHERE id = ?"
+    "UPDATE downloadSession SET progress = ?, status = 'downloading', lastHeartbeat = CURRENT_TIMESTAMP WHERE id = ?"
   );
   stmt.run(progress, id);
 }
@@ -56,8 +57,47 @@ function updateDownloadPath(id: number, relativePath: string) {
   stmt.run(relativePath, id);
 }
 
+function getDownloadSessionByTorrentID(torrentID: string): any {
+  const stmt = downloadSessionDB.prepare(
+    "SELECT * FROM downloadSession WHERE torrentID = ? ORDER BY startTime DESC LIMIT 1"
+  );
+  return stmt.get(torrentID);
+}
+
+function isTorrentDownloading(torrentID: string): boolean {
+  const session = getDownloadSessionByTorrentID(torrentID);
+  return session && session.status === "downloading";
+}
+
+function isTorrentCompleted(torrentID: string): boolean {
+  const session = getDownloadSessionByTorrentID(torrentID);
+  return session && session.status === "completed";
+}
+
+function isTorrentPaused(torrentID: string): boolean {
+  const session = getDownloadSessionByTorrentID(torrentID);
+  return session && session.status === "paused";
+}
+
+function markStaleDownloadsAsPaused(timeoutSeconds = 15) {
+  const stmt = downloadSessionDB.prepare(
+    `UPDATE downloadSession 
+     SET status = 'paused' 
+     WHERE status = 'downloading' 
+     AND strftime('%s', 'now') - strftime('%s', lastHeartbeat) > ?`
+  );
+
+  const result = stmt.run(timeoutSeconds);
+  return result.changes;
+}
+
 export {
   downloadSessionDB,
+  markStaleDownloadsAsPaused,
+  getDownloadSessionByTorrentID,
+  isTorrentPaused,
+  isTorrentDownloading,
+  isTorrentCompleted,
   updateDownloadPath,
   createDownloadSessionDB,
   updateDownloadProgress,

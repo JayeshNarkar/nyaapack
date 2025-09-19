@@ -32,4 +32,9 @@ function addTorrentToDB(torrent: TorrentSchema) {
   return result.lastInsertRowid;
 }
 
-export { torrentsDB, addTorrentToDB };
+function getTorrentByID(torrentID: string): any {
+  const stmt = torrentsDB.prepare("SELECT * FROM torrents WHERE id = ?");
+  return stmt.get(torrentID);
+}
+
+export { torrentsDB, addTorrentToDB, getTorrentByID };

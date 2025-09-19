@@ -1,4 +1,3 @@
-// logger.ts
 import logUpdate from "log-update";
 
 export class Logger {
