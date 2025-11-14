@@ -3,10 +3,7 @@ import path from "path";
 import { __dirname } from "../index.js";
 
 const compressionJobDB: DatabaseType = new Database(
-  path.join(__dirname, "compressionJob.db"),
-  {
-    verbose: console.log,
-  }
+  path.join(__dirname, "compressionJob.db")
 );
 
 compressionJobDB.exec(`
@@ -16,7 +13,8 @@ compressionJobDB.exec(`
     compressedPath TEXT,
     compressedRatio TEXT,
     startTime DATETIME DEFAULT CURRENT_TIMESTAMP,
-    endTime DATETIME
+    endTime DATETIME,
+    filesCompleted INTEGER
   )
 `);
 

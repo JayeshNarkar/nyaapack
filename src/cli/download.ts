@@ -7,7 +7,6 @@ import {
   promptUserBoolean,
 } from "../utils/helper.js";
 import { startDownload } from "../services/download.js";
-import { getActiveResourcesInfo } from "process";
 
 export default function downloadCommand() {
   const command = new Command("download")
@@ -46,7 +45,12 @@ export default function downloadCommand() {
             "Do you wish to download the only result? "
           );
           if (choice == true) {
-            console.log("Download started for " + filteredResults[0]?.name);
+            const result = startDownload(filteredResults[0]);
+            if (result.status != 200) {
+              throw Error(result.message);
+            }
+          } else {
+            console.log("✅Exiting...");
           }
         } else {
           displayTorrentTable(filteredResults);

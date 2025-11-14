@@ -10,6 +10,7 @@ downloadSessionDB.exec(`
   CREATE TABLE IF NOT EXISTS downloadSession (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     torrentID TEXT,
+    compressionJobID INTEGER,
     downloadPath TEXT,
     status TEXT DEFAULT 'downloading',
     progress REAL DEFAULT 0.0,
@@ -34,6 +35,13 @@ function updateDownloadProgress(id: number, progress: number) {
     "UPDATE downloadSession SET progress = ?, status = 'downloading', lastHeartbeat = CURRENT_TIMESTAMP WHERE id = ?"
   );
   stmt.run(progress, id);
+}
+
+function updateDownloadCompressionJob(id: number, compressionJobID: number) {
+  const stmt = downloadSessionDB.prepare(
+    "UPDATE downloadSession SET compressionJobID = ? WHERE id = ?"
+  );
+  stmt.run(compressionJobID, id);
 }
 
 function markDownloadDone(id: number) {
@@ -94,6 +102,7 @@ function markStaleDownloadsAsPaused(timeoutSeconds = 15) {
 export {
   downloadSessionDB,
   markStaleDownloadsAsPaused,
+  updateDownloadCompressionJob,
   getDownloadSessionByTorrentID,
   isTorrentPaused,
   isTorrentDownloading,

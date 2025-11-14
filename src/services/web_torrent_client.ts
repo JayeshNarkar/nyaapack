@@ -3,7 +3,7 @@ import {
   ensureDownloadDir,
   formatBytes,
   formatTimeRemaining,
-  getTorrentRelativeName,
+  getTorrentPath,
 } from "../utils/helper.js";
 import { TorrentSchema } from "../utils/types.js";
 import { client } from "./download.js";
@@ -29,7 +29,7 @@ function addTorrent(torrent: TorrentSchema, downloadSessionID?: number) {
   let progressInterval: NodeJS.Timeout | null = null;
 
   webtorrentInstance.on("ready", () => {
-    const relativePath = getTorrentRelativeName(webtorrentInstance);
+    const relativePath = getTorrentPath(webtorrentInstance);
     updateDownloadPath(downloadSessionID as number, relativePath as string);
 
     Logger.startProgress();

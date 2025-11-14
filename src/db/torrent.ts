@@ -4,10 +4,7 @@ import path from "path";
 import { __dirname } from "../index.js";
 
 const torrentsDB: DatabaseType = new Database(
-  path.join(__dirname, "torrents.db"),
-  {
-    verbose: console.log,
-  }
+  path.join(__dirname, "torrents.db")
 );
 
 torrentsDB.exec(`

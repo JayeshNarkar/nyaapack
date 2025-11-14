@@ -89,7 +89,7 @@ function formatTimeRemaining(torrent: WebTorrent.Torrent) {
   }
 }
 
-function getTorrentRelativeName(torrent: WebTorrent.Torrent): string {
+function getTorrentPath(torrent: WebTorrent.Torrent): string {
   const files = torrent.files || [];
   let relativeName: string;
 
@@ -113,7 +113,6 @@ function getTorrentRelativeName(torrent: WebTorrent.Torrent): string {
     }
   }
 
-  console.log("Relative path:", relativeName);
   return relativeName;
 }
 
@@ -146,7 +145,7 @@ async function promptUserBoolean(prompt: string): Promise<boolean> {
 }
 
 export {
-  getTorrentRelativeName,
+  getTorrentPath,
   filterTorrents,
   getTorrentQuality,
   getAudioType,
